@@ -1,6 +1,8 @@
 -- ==========================================================
--- FANTASMA1L HUB - BROOKHAVEN EDITION (v9.2)
--- Loading Screen premium · Sem emojis na UI · Webhook bonito
+-- FANTASMA1L HUB - BROOKHAVEN EDITION (v9.3)
+-- Loading Screen premium 路 Sem emojis na UI 路 Webhook bonito
+-- v9.3: Fling Boat corrigido 路 Novo TORNADO (ON/OFF) 路
+--       Novo BLACK HOLE (ON/OFF) 路 Kill Prop All com ON/OFF
 -- ==========================================================
 local Players           = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -38,14 +40,12 @@ local function resolveImage(id)
     if imgCache[clean] then return imgCache[clean] end
     local direct = "rbxassetid://" .. clean
     local result = direct
-    -- 1) Asset do tipo Image (AssetTypeId 1): o proprio ID ja e a textura, usa direto
     local okInfo, info = pcall(function()
         return MarketplaceService:GetProductInfo(tonumber(clean))
     end)
     if okInfo and info and info.AssetTypeId == 1 then
         result = direct
     else
-        -- 2) Decal/Model: tenta extrair a textura carregando o objeto
         pcall(function()
             local objs = game:GetObjects(direct)
             local o = objs and objs[1]
@@ -61,7 +61,6 @@ local function resolveImage(id)
                 pcall(function() o:Destroy() end)
             end
         end)
-        -- 3) Fallback final: API de thumbnail do Roblox (funciona para Decal)
         if result == direct then
             pcall(function()
                 local body = httpRequest("https://www.roblox.com/asset-thumbnail/json?assetId="
@@ -77,7 +76,7 @@ local function resolveImage(id)
     return result
 end
 
--- ── cargo ─────────────────────────────────────────────────────
+-- 鈹€鈹€ cargo 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
 local IS_ADMIN    = false
 local MY_ROLE     = "Utilizador Comum"
 local DETECT_REASON = "Sem Painel Admin"
@@ -127,7 +126,7 @@ local function getRoleBadge()
     return "Utilizador"
 end
 
--- ── notify ─────────────────────────────────────────────────────
+-- 鈹€鈹€ notify 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
 local function notify(title, text, duration)
     pcall(function()
         StarterGui:SetCore("SendNotification",
@@ -135,7 +134,7 @@ local function notify(title, text, duration)
     end)
 end
 
--- ── avatar URL ─────────────────────────────────────────────────
+-- 鈹€鈹€ avatar URL 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
 local function getAvatarUrl()
     local def = "https://www.roblox.com/headshot-thumbnail/image?userId="
         .. LocalPlayer.UserId .. "&width=420&height=420&format=png"
@@ -153,7 +152,7 @@ local function getAvatarUrl()
     return def
 end
 
--- ── webhook ───────────────────────────────────────────────────
+-- 鈹€鈹€ webhook 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
 local function sendWebhook()
     if WEBHOOK_URL == "" or WEBHOOK_URL:find("COLE_SEU") then return end
     task.spawn(function()
@@ -180,11 +179,11 @@ local function sendWebhook()
                 embedTitle = "FANTASMA1L HUB\nNova execucao detectada"
             end
             local data = {
-                username   = "Fantasma1l Hub · Logger",
+                username   = "Fantasma1l Hub 路 Logger",
                 avatar_url = avatar,
                 embeds = {{
                     title       = embedTitle,
-                    description = "═══════════════════",
+                    description = "鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺�",
                     color       = color,
                     thumbnail   = { url = avatar },
                     fields = {
@@ -193,15 +192,15 @@ local function sendWebhook()
                         { name = "User ID",    value = "`"..LocalPlayer.UserId.."`", inline = true },
                         { name = "Cargo",      value = badge, inline = false },
                         { name = "Executor",   value = "`"..exName.."`", inline = true },
-                        { name = "Hub",        value = "`Fantasma1l Hub · BH v9.2`", inline = true },
-                        { name = "Painel Admin", value = IS_ADMIN and "Ativo — "..DETECT_REASON or "Nao detectado", inline = false },
+                        { name = "Hub",        value = "`Fantasma1l Hub 路 BH v9.3`", inline = true },
+                        { name = "Painel Admin", value = IS_ADMIN and "Ativo 鈥� "..DETECT_REASON or "Nao detectado", inline = false },
                         { name = "Place ID",   value = "`"..game.PlaceId.."`", inline = true },
                         { name = "Server Job", value = "`"..tostring(game.JobId):sub(1,24).."...`", inline = true },
                         { name = "Acesso Rapido",
-                          value = "[Entrar no Servidor]("..joinLink..")  ·  [Discord]("..DISCORD_URL..")", inline = false },
+                          value = "[Entrar no Servidor]("..joinLink..")  路  [Discord]("..DISCORD_URL..")", inline = false },
                     },
                     footer = {
-                        text     = "Fantasma1l Hub · BH v9.2  |  "..os.date("!%d/%m/%Y %H:%M UTC"),
+                        text     = "Fantasma1l Hub 路 BH v9.3  |  "..os.date("!%d/%m/%Y %H:%M UTC"),
                         icon_url = "https://www.roblox.com/headshot-thumbnail/image?userId="..LocalPlayer.UserId.."&width=48&height=48&format=png"
                     },
                     timestamp = os.date("!%Y-%m-%dT%H:%M:%SZ"),
@@ -219,11 +218,11 @@ local function sendWebhook()
 end
 
 sendWebhook()
-notify(HUB_NAME, IS_ADMIN and (MY_ROLE .. " — Bem-vindo!") or "Carregando Brookhaven Edition...", 4)
+notify(HUB_NAME, IS_ADMIN and (MY_ROLE .. " 鈥� Bem-vindo!") or "Carregando Brookhaven Edition...", 4)
 
--- ═══════════════════════════════════════════════════════════
+-- 鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺�
 --  TELA DE CARREGAMENTO (cria antes do Redz)
--- ═══════════════════════════════════════════════════════════
+-- 鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺�
 local function createLoadingScreen()
     local pg = LocalPlayer:WaitForChild("PlayerGui", 10)
     if not pg then return nil, nil, nil, nil end
@@ -238,19 +237,15 @@ local function createLoadingScreen()
     sg.DisplayOrder = 1000
     sg.Parent = pg
 
-    -- fundo escuro
     local bg = Instance.new("Frame")
     bg.Size = UDim2.fromScale(1, 1)
     bg.BackgroundColor3 = Color3.fromRGB(3, 1, 10)
     bg.BorderSizePixel = 0
     bg.Parent = sg
 
-    -- imagem de fundo
     local bgImg = Instance.new("ImageLabel")
     bgImg.Size = UDim2.fromScale(1, 1)
     bgImg.BackgroundTransparency = 1
-    -- imagem de fundo (o asset BG_NUM e um Image; rbxassetid carrega direto.
-    -- rbxthumb type=Asset so aceita 150x150 ou 420x420 — 768x432 deixava o fundo em branco)
     bgImg.Image = BG_ID
     task.spawn(function()
         local real = resolveImage(BG_ID)
@@ -260,7 +255,6 @@ local function createLoadingScreen()
     bgImg.ImageTransparency = 0.1
     bgImg.Parent = bg
 
-    -- overlay escuro suave
     local overlay = Instance.new("Frame")
     overlay.Size = UDim2.fromScale(1, 1)
     overlay.BackgroundColor3 = Color3.new(0, 0, 0)
@@ -276,7 +270,6 @@ local function createLoadingScreen()
         NumberSequenceKeypoint.new(1, 0),
     })
 
-    -- ── CARD CENTRAL ───────────────────────────────────────────
     local card = Instance.new("Frame")
     card.Size = UDim2.fromOffset(460, 448)
     card.AnchorPoint = Vector2.new(0.5, 0.5)
@@ -287,7 +280,6 @@ local function createLoadingScreen()
     card.Parent = bg
     Instance.new("UICorner", card).CornerRadius = UDim.new(0, 22)
 
-    -- borda animada do card
     local cStroke = Instance.new("UIStroke", card)
     cStroke.Color = Color3.fromRGB(100, 40, 200)
     cStroke.Thickness = 1.8
@@ -300,7 +292,6 @@ local function createLoadingScreen()
         ColorSequenceKeypoint.new(1,    Color3.fromRGB(80,  30, 180)),
     })
 
-    -- linha de topo (brilho roxo)
     local topLine = Instance.new("Frame")
     topLine.Size = UDim2.new(0.65, 0, 0, 2)
     topLine.AnchorPoint = Vector2.new(0.5, 0)
@@ -316,7 +307,6 @@ local function createLoadingScreen()
         ColorSequenceKeypoint.new(1,   Color3.fromRGB(0, 0, 0)),
     })
 
-    -- ── TÍTULO ─────────────────────────────────────────────────
     local titleLbl = Instance.new("TextLabel")
     titleLbl.Size = UDim2.new(1, 0, 0, 40)
     titleLbl.Position = UDim2.new(0, 0, 0, 16)
@@ -341,13 +331,12 @@ local function createLoadingScreen()
     edLbl.Size = UDim2.new(1, 0, 0, 20)
     edLbl.Position = UDim2.new(0, 0, 0, 55)
     edLbl.BackgroundTransparency = 1
-    edLbl.Text = "BROOKHAVEN EDITION  ·  v9.2"
+    edLbl.Text = "BROOKHAVEN EDITION  路  v9.3"
     edLbl.TextColor3 = Color3.fromRGB(150, 80, 240)
     edLbl.Font = Enum.Font.Gotham
     edLbl.TextSize = 13
     edLbl.Parent = card
 
-    -- separador
     local sep = Instance.new("Frame")
     sep.Size = UDim2.new(0.72, 0, 0, 1)
     sep.AnchorPoint = Vector2.new(0.5, 0)
@@ -356,8 +345,6 @@ local function createLoadingScreen()
     sep.BorderSizePixel = 0
     sep.Parent = card
 
-    -- ── AVATAR ─────────────────────────────────────────────────
-    -- anel externo animado
     local ringFrame = Instance.new("Frame")
     ringFrame.Size = UDim2.fromOffset(130, 130)
     ringFrame.AnchorPoint = Vector2.new(0.5, 0)
@@ -378,7 +365,6 @@ local function createLoadingScreen()
         ColorSequenceKeypoint.new(1,    Color3.fromRGB(255, 150, 255)),
     })
 
-    -- fundo do avatar
     local avBg = Instance.new("Frame")
     avBg.Size = UDim2.fromOffset(116, 116)
     avBg.AnchorPoint = Vector2.new(0.5, 0.5)
@@ -388,7 +374,6 @@ local function createLoadingScreen()
     avBg.Parent = ringFrame
     Instance.new("UICorner", avBg).CornerRadius = UDim.new(1, 0)
 
-    -- imagem do avatar
     local avImg = Instance.new("ImageLabel")
     avImg.Size = UDim2.fromOffset(108, 108)
     avImg.AnchorPoint = Vector2.new(0.5, 0.5)
@@ -398,7 +383,6 @@ local function createLoadingScreen()
     avImg.Parent = avBg
     Instance.new("UICorner", avImg).CornerRadius = UDim.new(1, 0)
 
-    -- ── NOME E CARGO ───────────────────────────────────────────
     local plNameLbl = Instance.new("TextLabel")
     plNameLbl.Size = UDim2.new(1, 0, 0, 25)
     plNameLbl.Position = UDim2.new(0, 0, 0, 237)
@@ -431,18 +415,16 @@ local function createLoadingScreen()
     bTxt.TextSize = 13
     bTxt.Parent = badgeBg
 
-    -- indicador de jogo
     local gameLbl = Instance.new("TextLabel")
     gameLbl.Size = UDim2.new(1, 0, 0, 18)
     gameLbl.Position = UDim2.new(0, 0, 0, 298)
     gameLbl.BackgroundTransparency = 1
-    gameLbl.Text = "Jogo suportado  ·  Brookhaven RP"
+    gameLbl.Text = "Jogo suportado  路  Brookhaven RP"
     gameLbl.TextColor3 = Color3.fromRGB(65, 185, 95)
     gameLbl.Font = Enum.Font.Gotham
     gameLbl.TextSize = 12
     gameLbl.Parent = card
 
-    -- ── BARRA DE PROGRESSO ─────────────────────────────────────
     local loadMsg = Instance.new("TextLabel")
     loadMsg.Size = UDim2.new(1, -40, 0, 20)
     loadMsg.Position = UDim2.new(0, 20, 0, 332)
@@ -465,7 +447,6 @@ local function createLoadingScreen()
     pctLbl.TextXAlignment = Enum.TextXAlignment.Right
     pctLbl.Parent = card
 
-    -- trilha da barra
     local barBg = Instance.new("Frame")
     barBg.Size = UDim2.new(1, -40, 0, 8)
     barBg.Position = UDim2.new(0, 20, 0, 356)
@@ -475,7 +456,6 @@ local function createLoadingScreen()
     barBg.Parent = card
     Instance.new("UICorner", barBg).CornerRadius = UDim.new(1, 0)
 
-    -- preenchimento
     local barFill = Instance.new("Frame")
     barFill.Size = UDim2.new(0.001, 0, 1, 0)
     barFill.BackgroundColor3 = Color3.fromRGB(140, 60, 240)
@@ -490,7 +470,6 @@ local function createLoadingScreen()
         ColorSequenceKeypoint.new(1,   Color3.fromRGB(215, 158, 255)),
     })
 
-    -- shimmer na barra
     local shimmer = Instance.new("Frame")
     shimmer.Size = UDim2.new(0, 44, 1, 0)
     shimmer.Position = UDim2.new(-0.3, 0, 0, 0)
@@ -506,19 +485,16 @@ local function createLoadingScreen()
         NumberSequenceKeypoint.new(1, 1),
     })
 
-    -- rodapé
     local footerLbl = Instance.new("TextLabel")
     footerLbl.Size = UDim2.new(1, 0, 0, 20)
     footerLbl.Position = UDim2.new(0, 0, 0, 420)
     footerLbl.BackgroundTransparency = 1
-    footerLbl.Text = "Fantasma1l Hub  ·  Brookhaven Edition  ·  v9.2"
+    footerLbl.Text = "Fantasma1l Hub  路  Brookhaven Edition  路  v9.3"
     footerLbl.TextColor3 = Color3.fromRGB(48, 32, 78)
     footerLbl.Font = Enum.Font.Gotham
     footerLbl.TextSize = 11
     footerLbl.Parent = card
 
-    -- ── ANIMAÇÕES ──────────────────────────────────────────────
-    -- anel girando
     task.spawn(function()
         local deg = 0
         while sg and sg.Parent do
@@ -527,7 +503,6 @@ local function createLoadingScreen()
             task.wait(0.03)
         end
     end)
-    -- borda do card girando mais devagar
     task.spawn(function()
         local deg = 0
         while sg and sg.Parent do
@@ -536,7 +511,6 @@ local function createLoadingScreen()
             task.wait(0.04)
         end
     end)
-    -- gradiente do título pulsando
     task.spawn(function()
         local deg = 0
         while sg and sg.Parent do
@@ -545,7 +519,6 @@ local function createLoadingScreen()
             task.wait(0.06)
         end
     end)
-    -- shimmer varrendo a barra
     task.spawn(function()
         while sg and sg.Parent do
             shimmer.Position = UDim2.new(-0.25, 0, 0, 0)
@@ -560,9 +533,9 @@ local function createLoadingScreen()
     return sg, barFill, pctLbl, loadMsg
 end
 
--- ═══════════════════════════════════════════════════════════
---  FUNÇÕES DE JOGO
--- ═══════════════════════════════════════════════════════════
+-- 鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺�
+--  FUN脟脮ES DE JOGO
+-- 鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺�
 local function getHRP()
     local c = LocalPlayer.Character
     return c and c:FindFirstChild("HumanoidRootPart")
@@ -585,9 +558,9 @@ end
 local function guardLocalCharacter(safeCF)
     local root = getHRP()
     if not root or not safeCF then return end
-    local hd = (Vector3.new(root.Position.X,0,root.Position.Z)
-        - Vector3.new(safeCF.Position.X,0,safeCF.Position.Z)).Magnitude
-    if root.Position.Y < safeCF.Position.Y - 30 or root.Position.Y < -350 or hd > 250 then
+    -- v9.3: so restaura se CAIR no void; nao puxa o personagem
+    -- de volta ao andar (isso travava o jogador no lugar)
+    if root.Position.Y < safeCF.Position.Y - 30 or root.Position.Y < -350 then
         restoreLocalCharacter(safeCF)
     end
 end
@@ -734,6 +707,14 @@ local function getPropPart(p)
     return p.PrimaryPart or p:FindFirstChildWhichIsA("BasePart",true)
 end
 
+local function unanchorModel(m)
+    pcall(function()
+        for _, p in ipairs(m:GetDescendants()) do
+            if p:IsA("BasePart") then p.Anchored = false end
+        end
+    end)
+end
+
 local function isBadProp(obj)
     if not obj or not obj.Parent then return true end
     local blocked = {baseplate=true,base=true,ground=true,floor=true,terrain=true,
@@ -804,13 +785,24 @@ local function isTargetSeatedOn(prop, hum)
     return false
 end
 
+-- v9.3: GetBus agora acha QUALQUER veiculo proprio (Car, Bus, Boat,
+-- Helicoptero...). Antes so achava "Car"/"Bus" 鈥� por isso o Fling Boat
+-- nunca pegava o barco, que se chama "NomeDoPlayerBoat".
 local function GetBus()
     local v = workspace:FindFirstChild("Vehicles")
-    return v and (v:FindFirstChild(LocalPlayer.Name.."Car") or v:FindFirstChild(LocalPlayer.Name.."Bus"))
+    if not v then return nil end
+    local pre = LocalPlayer.Name
+    for _, veh in ipairs(v:GetChildren()) do
+        if veh.Name:sub(1, #pre) == pre then return veh end
+    end
+    return nil
 end
 
 local function SpawnBus()
-    local bus = GetBus() if bus then return bus end
+    -- o metodo Bus continua exigindo Car/Bus de verdade
+    local v = workspace:FindFirstChild("Vehicles")
+    local bus = v and (v:FindFirstChild(LocalPlayer.Name.."Car") or v:FindFirstChild(LocalPlayer.Name.."Bus"))
+    if bus then return bus end
     local hrp = getHRP() if not hrp then return nil end
     local orig = hrp.CFrame
     hrp.CFrame = CFrame.new(1118.81,75.998,-1138.61) task.wait(0.5)
@@ -901,9 +893,21 @@ local function executePropMakerKill(tp, selProp)
     if pr.Parent then pcall(function() pr.AssemblyLinearVelocity=Vector3.zero pr.AssemblyAngularVelocity=Vector3.zero moveProp(prop,origCF) end) task.wait(0.1) end
 end
 
+-- v9.3: controle global do Kill Prop All (botao ON/OFF)
+local KillPropAll = { Stop=false, ProtActive=false, ProtConn=nil, SafeCF=nil, Finished=true }
+
+local function stopKillPropAll(silent)
+    KillPropAll.Stop = true
+    KillPropAll.ProtActive = false
+    if KillPropAll.ProtConn then pcall(function() KillPropAll.ProtConn:Disconnect() end) KillPropAll.ProtConn = nil end
+    restoreLocalCharacter(KillPropAll.SafeCF)
+    if not silent then notify("Kill Prop All", "Desativado! Voce esta livre.") end
+end
+
 local function executePropThroughTargets(prop, targets)
     if not prop or not prop.Parent then return end
     for _,tp in ipairs(targets) do
+        if KillPropAll.Stop then break end
         if not prop or not prop.Parent then break end
         if not tp.Parent then continue end
         local tc=tp.Character local tr=tc and tc:FindFirstChild("HumanoidRootPart")
@@ -914,15 +918,15 @@ local function executePropThroughTargets(prop, targets)
         pcall(function() local sz=tc:GetExtentsSize() if sz and sz.Y then off=CFrame.new(0,-sz.Y/2,0) end end)
         pcall(function() for _,p in ipairs(prop:GetDescendants()) do if p:IsA("BasePart") then p.CanCollide=true end end end)
         local ss,seated=tick(),false
-        while tick()-ss<2.2 do
+        while tick()-ss<2.2 and not KillPropAll.Stop do
             if not prop.Parent or not tr.Parent or th.Health<=0 then break end applyNetworkBypass()
             pcall(function() if pr.Parent then pr.AssemblyAngularVelocity=Vector3.zero pr.AssemblyLinearVelocity=Vector3.zero end moveProp(prop,tr.CFrame*off) end)
             if isTargetSeatedOn(prop,th) then seated=true break end task.wait(0.03)
         end
         if not seated then task.wait(0.05) continue end
-        if prop.Parent and tr.Parent and th.Health>0 then
+        if prop.Parent and tr.Parent and th.Health>0 and not KillPropAll.Stop then
             local ds=tick() local vCF=CFrame.new(tr.Position.X,VOID_Y-250,tr.Position.Z)*off
-            while tick()-ds<1.2 do
+            while tick()-ds<1.2 and not KillPropAll.Stop do
                 if not prop.Parent or not tr.Parent or th.Health<=0 then break end applyNetworkBypass()
                 pcall(function() if pr.Parent then pr.AssemblyLinearVelocity=Vector3.new(0,-FALL_SPEED,0) pr.AssemblyAngularVelocity=Vector3.zero end moveProp(prop,vCF) end)
                 task.wait(0.03)
@@ -933,18 +937,25 @@ local function executePropThroughTargets(prop, targets)
 end
 
 local function executeKillPropAll()
+    if not KillPropAll.Finished then notify("Kill Prop All","Ja esta rodando! Use o ON/OFF.",3) return end
+    KillPropAll.Stop = false
+    KillPropAll.Finished = false
     local props=scanProps() local uProps,seen={},{}
     for _,p in ipairs(props) do
         local hs=p and (p:IsA("Seat") or p:IsA("VehicleSeat") or p:FindFirstChildWhichIsA("Seat",true) or p:FindFirstChildWhichIsA("VehicleSeat",true))
         if p and p.Parent and getPropPart(p) and hs and not seen[p] then seen[p]=true table.insert(uProps,p) end
     end
-    if #uProps==0 then notify("Kill Prop All","Nenhum prop encontrado!") return end
+    if #uProps==0 then notify("Kill Prop All","Nenhum prop encontrado!") KillPropAll.Finished=true return end
     local targets={}
     for _,pl in ipairs(Players:GetPlayers()) do if pl~=LocalPlayer then table.insert(targets,pl) end end
-    if #targets==0 then notify("Kill Prop All","Sem outros jogadores.") return end
+    if #targets==0 then notify("Kill Prop All","Sem outros jogadores.") KillPropAll.Finished=true return end
     local mr=getHRP() local safeCF=mr and mr.CFrame or nil
-    local protActive=true
-    local protConn=RunService.Heartbeat:Connect(function() if not protActive then return end guardLocalCharacter(safeCF) end)
+    KillPropAll.SafeCF = safeCF
+    KillPropAll.ProtActive = true
+    KillPropAll.ProtConn = RunService.Heartbeat:Connect(function()
+        if not KillPropAll.ProtActive then return end
+        guardLocalCharacter(KillPropAll.SafeCF)
+    end)
     notify("Kill Prop All","Movendo "..#uProps.." props contra "..#targets.." jogadores!")
     local done,total=0,#uProps
     for _,p in ipairs(uProps) do
@@ -952,7 +963,13 @@ local function executeKillPropAll()
             local ok,err=pcall(function() executePropThroughTargets(p,targets) end)
             if not ok then warn("[F1L BH] "..tostring(err)) end
             done+=1
-            if done>=total then protActive=false if protConn then protConn:Disconnect() end restoreLocalCharacter(safeCF) notify("Kill Prop All","Todos os props concluiram!") end
+            if done>=total or KillPropAll.Stop then
+                KillPropAll.ProtActive=false
+                if KillPropAll.ProtConn then KillPropAll.ProtConn:Disconnect() KillPropAll.ProtConn=nil end
+                restoreLocalCharacter(KillPropAll.SafeCF)
+                KillPropAll.Finished = true
+                notify("Kill Prop All", KillPropAll.Stop and "Interrompido! Voce esta livre." or "Todos os props concluiram!")
+            end
         end)
     end
 end
@@ -1149,7 +1166,6 @@ function ExtraHub.vehicleActionAll(action)
     notify("Veiculos",action.." em "..c.." veiculos.",3)
 end
 
-
 -- barco: pede ao servidor ou usa o mais proximo do mapa
 function ExtraHub.getBoat()
     local re = ReplicatedStorage:FindFirstChild("RE")
@@ -1159,7 +1175,7 @@ function ExtraHub.getBoat()
             pcall(function() remote:FireServer("PickingCar", nm) end)
             task.wait(0.5)
             local v = GetBus()
-            if v then return v, true end
+            if v then unanchorModel(v) return v, true end
         end
     end
     local hrp = getHRP()
@@ -1172,7 +1188,207 @@ function ExtraHub.getBoat()
             if d < best then near, best = v, d end
         end
     end
+    if near then unanchorModel(near) end
     return near, false
+end
+
+-- 鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺�
+--  TORNADO (barco) 鈥� v9.3
+--  Liga: teleporta VOCE para o oceano, puxa o barco ate voce,
+--  teleporta o barco para o centro da pra莽a e gira 360.
+--  Desliga: para o giro e te leva de volta para a pra莽a.
+-- 鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺�
+local Tornado = {
+    Enabled   = false,
+    Angle     = 0,
+    SpinSpeed = 8,                -- graus por passo (ajuste no slider)
+    Boat      = nil,
+    BaseCF    = nil,
+    SafeCF    = nil,
+    -- Ajuste essas coordenadas se o seu mapa for diferente:
+    OceanCF   = CFrame.new(145.51, 12, 4021.58), -- oceano, longe da ilha
+    PlazaCF   = CFrame.new(145.51, 4, 21.58),    -- centro da pra莽a (fallback)
+}
+
+local function getPlazaCF()
+    local root = getHRP()
+    local near, dist = nil, math.huge
+    for _, o in ipairs(workspace:GetDescendants()) do
+        if o:IsA("SpawnLocation") then
+            local d = root and (o.Position - root.Position).Magnitude or 0
+            if d < dist then near, dist = o, d end
+        end
+    end
+    if near then return CFrame.new(near.Position) end
+    return Tornado.PlazaCF
+end
+
+function ExtraHub.startTornado()
+    if Tornado.Enabled then return end
+    local mr = getHRP()
+    if not mr then notify("Tornado", "Personagem nao encontrado.", 3) return end
+    Tornado.Enabled = true
+    Tornado.SafeCF  = mr.CFrame
+    task.spawn(function()
+        -- 1) teleporta o jogador para o oceano
+        applyNetworkBypass()
+        mr.CFrame = Tornado.OceanCF + Vector3.new(0, 10, 0)
+        mr.AssemblyLinearVelocity = Vector3.zero
+        notify("Tornado", "Voce foi teleportado para o oceano!")
+        task.wait(0.8)
+        if not Tornado.Enabled then return end
+        -- 2) puxa o barco ate o jogador
+        local boat = ExtraHub.getBoat()
+        if not boat or not boat.Parent then
+            notify("Tornado", "Nenhum barco encontrado!", 4)
+            Tornado.Enabled = false
+            return
+        end
+        unanchorModel(boat)
+        local br = getHRP()
+        local r  = boat.PrimaryPart or boat:FindFirstChildWhichIsA("BasePart", true)
+        if br and r then
+            pcall(function()
+                boat:PivotTo(br.CFrame * CFrame.new(0, 2, -20))
+                r.AssemblyLinearVelocity  = Vector3.zero
+                r.AssemblyAngularVelocity = Vector3.zero
+            end)
+        end
+        notify("Tornado", "Barco puxado ate voce!")
+        task.wait(0.8)
+        if not Tornado.Enabled then return end
+        -- 3) teleporta o barco para o centro da pra莽a
+        Tornado.Boat   = boat
+        Tornado.BaseCF = getPlazaCF()
+        Tornado.Angle  = 0
+        pcall(function() boat:PivotTo(Tornado.BaseCF + Vector3.new(0, 3, 0)) end)
+        notify("Tornado", "Barco na pra莽a! Girando 360 como um tornado!")
+        -- 4) giro continuo em 360
+        while Tornado.Enabled and boat.Parent do
+            applyNetworkBypass()
+            Tornado.Angle = (Tornado.Angle + Tornado.SpinSpeed) % 360
+            pcall(function()
+                local rr = boat.PrimaryPart or boat:FindFirstChildWhichIsA("BasePart", true)
+                if rr then
+                    boat:PivotTo(Tornado.BaseCF * CFrame.Angles(0, math.rad(Tornado.Angle), 0) + Vector3.new(0, 3, 0))
+                    rr.AssemblyLinearVelocity  = Vector3.zero
+                    rr.AssemblyAngularVelocity = Vector3.new(0, 10, 0)
+                end
+            end)
+            task.wait(0.03)
+        end
+    end)
+end
+
+function ExtraHub.stopTornado()
+    if not Tornado.Enabled then return end
+    Tornado.Enabled = false
+    local boat = Tornado.Boat
+    if boat and boat.Parent then
+        pcall(function()
+            local rr = boat.PrimaryPart or boat:FindFirstChildWhichIsA("BasePart", true)
+            if rr then
+                rr.AssemblyLinearVelocity  = Vector3.zero
+                rr.AssemblyAngularVelocity = Vector3.zero
+            end
+        end)
+    end
+    Tornado.Boat = nil
+    -- leva o jogador de volta para a pra莽a, perto do barco
+    local mr = getHRP()
+    if mr and Tornado.BaseCF then
+        pcall(function()
+            mr.CFrame = Tornado.BaseCF + Vector3.new(0, 5, 18)
+            mr.AssemblyLinearVelocity = Vector3.zero
+        end)
+    end
+    notify("Tornado", "Desativado!")
+end
+
+-- 鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺�
+--  BLACK HOLE 鈥� v9.3
+--  Cria um redemoinho no seu personagem que puxa e faz girar:
+--  portas de casas/lojas, helicoptero, motos, carros, barcos
+--  e as bikes/motos do fliperama (tudo que tiver VehicleSeat).
+-- 鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺�
+local BlackHole = {
+    Enabled = false,
+    Power   = 30,   -- studs por passo (ajuste no slider)
+}
+
+local function scanBlackHoleTargets()
+    local t, seen = {}, {}
+    local function add(o) if o and o.Parent and not seen[o] then seen[o] = true table.insert(t, o) end end
+    -- veiculos: helicoptero, motos, carros, barcos e as bikes do fliperama
+    for _, v in ipairs(ExtraHub.getVehicles()) do add(v) end
+    -- portas de casas/lojas
+    for _, o in ipairs(workspace:GetDescendants()) do
+        if (o:IsA("Model") or o:IsA("BasePart")) and not seen[o] then
+            local nm = o.Name:lower()
+            if nm:find("door") or nm:find("gate") or nm:find("porta") then
+                -- pega so o objeto de cima, nao os filhos que tambem tem "door" no nome
+                local pn = o.Parent and o.Parent.Name:lower() or ""
+                if not pn:find("door") and not pn:find("gate") and not pn:find("porta") then
+                    local r = o:IsA("BasePart") and o or getPropPart(o)
+                    if r then
+                        local sz = r.Size
+                        if sz.X < 60 and sz.Y < 80 and sz.Z < 60 then add(o) end
+                    end
+                end
+            end
+        end
+    end
+    return t
+end
+
+function ExtraHub.startBlackHole()
+    if BlackHole.Enabled then return end
+    BlackHole.Enabled = true
+    notify("Black Hole", "Ativado! Puxando portas, helicoptero, motos e bikes...")
+    task.spawn(function()
+        local targets, lastScan = {}, 0
+        while BlackHole.Enabled do
+            applyNetworkBypass()
+            if tick() - lastScan > 3 then
+                lastScan = tick()
+                targets  = scanBlackHoleTargets()
+            end
+            local hrp = getHRP()
+            if hrp then
+                local holePos = hrp.Position + Vector3.new(0, 6, 0)
+                for _, v in ipairs(targets) do
+                    pcall(function()
+                        if not v.Parent then return end
+                        local r = v:IsA("BasePart") and v or (v.PrimaryPart or v:FindFirstChildWhichIsA("BasePart", true))
+                        if not r or r.Anchored then return end
+                        local off  = holePos - r.Position
+                        local dist = off.Magnitude
+                        if dist > 6 then
+                            local dir   = off.Unit
+                            local step  = math.clamp(dist * 0.3, 8, BlackHole.Power)
+                            local swirl = Vector3.new(-dir.Z, 0, dir.X) * (step * 0.4) -- redemoinho
+                            local np    = r.Position + dir * step + swirl
+                            if v:IsA("Model") then v:PivotTo(CFrame.new(np, holePos))
+                            else v.CFrame = CFrame.new(np, holePos) end
+                            r.AssemblyLinearVelocity  = dir * 80
+                            r.AssemblyAngularVelocity = Vector3.new(0, 14, 0)
+                        else
+                            -- chegou perto: so gira em volta do buraco
+                            r.AssemblyLinearVelocity  = Vector3.zero
+                            r.AssemblyAngularVelocity = Vector3.new(0, 25, 0)
+                        end
+                    end)
+                end
+            end
+            task.wait(0.05)
+        end
+    end)
+end
+
+function ExtraHub.stopBlackHole()
+    if not BlackHole.Enabled then return end
+    BlackHole.Enabled = false
+    notify("Black Hole", "Desativado.")
 end
 
 -- FLING CARRO / BARCO: encaixa o alvo no veiculo, sobe ate a altura escolhida acima de onde ele esta, solta e volta em seguranca
@@ -1198,6 +1414,16 @@ function ExtraHub.flingCarry(kind, tp)
         veh, ownVeh = ExtraHub.getBoat()
     end
     if not veh then notify("Fling "..kind, "Nao consegui obter o veiculo.", 4) return end
+    -- v9.3: barco/chegava ancorado e longe 鈥� destrava e traz ate o jogador primeiro
+    unanchorModel(veh)
+    if kind == "Boat" then
+        pcall(function()
+            veh:PivotTo(safeCF * CFrame.new(0, 3, -18))
+            local rr = veh.PrimaryPart or veh:FindFirstChildWhichIsA("BasePart", true)
+            if rr then rr.AssemblyLinearVelocity = Vector3.zero rr.AssemblyAngularVelocity = Vector3.zero end
+        end)
+        task.wait(0.3)
+    end
     local seat = veh:FindFirstChildWhichIsA("VehicleSeat", true) or veh:FindFirstChildWhichIsA("Seat", true) or veh.PrimaryPart
     if not seat then notify("Fling "..kind, "Veiculo sem assento.", 4) return end
 
@@ -1327,7 +1553,6 @@ function ExtraHub.flingCouchCarry(tp)
     end
     task.wait(0.1)
 
-    -- leva o alvo ao alto, acima de onde ele esta agora
     local top = tr.Position + Vector3.new(0, ExtraHub.FlingHeight, 0)
     local ls = tick()
     while tick() - ls < 0.8 do
@@ -1346,7 +1571,6 @@ function ExtraHub.flingCouchCarry(tp)
         task.wait()
     end
 
-    -- guarda o couch, solta o alvo e volta em seguranca (igual ao metodo Couch)
     if item.Parent then item.Parent = bp end
     task.wait(0.01)
     pcall(function() if toolRemote then toolRemote:InvokeServer("PickingTools", "Couch") end end)
@@ -1483,11 +1707,10 @@ function UIC.setTitleIcon(id) local scr=UIC.getScreen() local hub=scr and scr:Fi
 function UIC.setEffect(id) local scr=UIC.getScreen() if not scr then return end for _,o in ipairs(scr:GetDescendants()) do if o.Name=="FantasmaWindowEffect" then o:Destroy() end end if not id or id=="" then return end local tex=UIC.resolveImage(id) local function dec(g,s,z) local e=Instance.new("ImageLabel") e.Name="FantasmaWindowEffect" e.AnchorPoint=Vector2.new(0.5,0.5) e.Position=UDim2.fromScale(0.5,0.5) e.Size=UDim2.fromScale(s,s) e.BackgroundTransparency=1 e.Image=tex e.ScaleType=Enum.ScaleType.Fit e.ZIndex=z e.Active=false e.Parent=g end local hub=scr:FindFirstChild("Hub") if hub then dec(hub,1.22,0) end for _,o in ipairs(scr:GetChildren()) do if o:IsA("ImageButton") and o~=hub then dec(o,1.8,0) end end end
 function UIC.applyTheme(n) if not UIC.Redz then return end local c={Vermelho=Color3.fromRGB(235,25,45),Azul=Color3.fromRGB(35,120,255),Amarelo=Color3.fromRGB(255,205,25),Preto=Color3.fromRGB(75,75,85),Cinza=Color3.fromRGB(145,145,155)} local acc=c[n] if not acc then return end local id="F1L_"..n UIC.Redz.Themes[id]={["Color Hub 1"]=ColorSequence.new({ColorSequenceKeypoint.new(0,acc),ColorSequenceKeypoint.new(0.48,Color3.fromRGB(5,5,8)),ColorSequenceKeypoint.new(1,acc:Lerp(Color3.new(0,0,0),0.55))}),["Color Hub 2"]=Color3.fromRGB(18,18,23),["Color Stroke"]=acc:Lerp(Color3.new(0,0,0),0.35),["Color Theme"]=acc,["Color Text"]=Color3.fromRGB(245,245,245),["Color Dark Text"]=Color3.fromRGB(185,185,195)} pcall(function() UIC.Redz:SetTheme(id) end) end
 
--- ═══════════════════════════════════════════════════════════
---  REDZ LIBRARY — com tela de carregamento + sem emojis
--- ═══════════════════════════════════════════════════════════
+-- 鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺�
+--  REDZ LIBRARY 鈥� com tela de carregamento + sem emojis
+-- 鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺�
 task.spawn(function()
-    -- 1) CRIA A TELA DE CARREGAMENTO
     local loadSg, barFill, pctLbl, loadMsg = createLoadingScreen()
 
     local function progress(pct, msg)
@@ -1500,14 +1723,12 @@ task.spawn(function()
         if loadMsg and loadMsg.Parent then loadMsg.Text = msg end
     end
 
-    -- 2) ANIMAÇÃO ENQUANTO CARREGA
     progress(0.08, "Iniciando o hub...")     ; task.wait(0.35)
     progress(0.22, "Carregando recursos...") ; task.wait(0.30)
     progress(0.38, "Preparando modulos...")  ; task.wait(0.28)
     progress(0.52, "Conectando servicos...") ; task.wait(0.25)
     progress(0.65, "Carregando biblioteca UI...")
 
-    -- 3) CARREGA O REDZ
     local redz
     local urls = {
         "https://raw.githubusercontent.com/minhdepzai-v/LibraryRobloc/refs/heads/main/RedzLibrary.lua",
@@ -1531,7 +1752,6 @@ task.spawn(function()
     progress(0.92, "Aplicando temas...")       ; task.wait(0.20)
     progress(1.00, "Pronto!")                  ; task.wait(0.55)
 
-    -- 4) FADE-OUT DA TELA
     if loadSg and loadSg.Parent then
         local fadeF = Instance.new("Frame")
         fadeF.Size = UDim2.fromScale(1, 1)
@@ -1546,9 +1766,8 @@ task.spawn(function()
         loadSg:Destroy()
     end
 
-    -- 5) CONSTRÓI O PAINEL REDZ
-    local wTitle = IS_ADMIN and (HUB_NAME .. " — " .. MY_ROLE) or HUB_NAME
-    local wSub   = IS_ADMIN and ("Brookhaven v9.2  |  " .. MY_ROLE) or "Brookhaven Edition v9.2"
+    local wTitle = IS_ADMIN and (HUB_NAME .. " 鈥� " .. MY_ROLE) or HUB_NAME
+    local wSub   = IS_ADMIN and ("Brookhaven v9.3  |  " .. MY_ROLE) or "Brookhaven Edition v9.3"
 
     local Window = redz:MakeWindow({
         Title      = wTitle,
@@ -1561,7 +1780,6 @@ task.spawn(function()
         Corner = { CornerRadius = UDim.new(35, 1) }
     })
 
-    -- ── abas (sem emojis, ícones Feather limpos) ──────────────
     local T = {
         Home     = Window:MakeTab({ "Inicio",          "home"       }),
         Troll    = Window:MakeTab({ "Troll e Acoes",   "zap"        }),
@@ -1583,7 +1801,7 @@ task.spawn(function()
 
     -- HOME
     T.Home:AddSection({ IS_ADMIN and "Painel Admin Detectado" or "Bem-vindo" })
-    T.Home:AddParagraph({ HUB_NAME, "Brookhaven Edition v9.2  |  " .. (IS_ADMIN and MY_ROLE or "Utilizador Comum") })
+    T.Home:AddParagraph({ HUB_NAME, "Brookhaven Edition v9.3  |  " .. (IS_ADMIN and MY_ROLE or "Utilizador Comum") })
     T.Home:AddSection({ "Comunidade" })
     T.Home:AddDiscordInvite({ Name=HUB_NAME, Description="Servidor oficial da comunidade Fantasma1l Hub", Logo=ICON_ID, Invite=DISCORD_URL })
     T.Home:AddButton({ "Copiar Link do Discord", function()
@@ -1699,14 +1917,14 @@ task.spawn(function()
     end
 
     T.Troll:AddSection({ "Acoes de Kill" })
-    T.Troll:AddButton({ "KILL  —  Alvo Selecionado", function()
+    T.Troll:AddButton({ "KILL  鈥�  Alvo Selecionado", function()
         local n=getgenv().Target or selName
         if not n or n=="Ninguem" then notify("Erro","Selecione um jogador.") return end
         local tp=Players:FindFirstChild(n)
         if tp then notify("Kill","Executando em "..tp.Name.." ["..methodKill.."]") task.spawn(function() execMethod(tp,methodKill) end)
         else notify("Erro","Jogador nao encontrado.") end
     end })
-    T.Troll:AddButton({ "KILL ALL  —  Todos no Servidor", function()
+    T.Troll:AddButton({ "KILL ALL  鈥�  Todos no Servidor", function()
         notify("Kill All","Kill All com "..methodKill.."!")
         task.spawn(function()
             for _,pl in ipairs(Players:GetPlayers()) do if pl~=LocalPlayer then
@@ -1716,8 +1934,10 @@ task.spawn(function()
             notify("Kill All","Fila concluida.",3)
         end)
     end })
-    T.Troll:AddButton({ "KILL PROP ALL  —  Props Simultaneos", function()
-        executeKillPropAll()
+    -- v9.3: Kill Prop All agora tem botao ON/OFF 鈥� desligar solta o personagem na hora
+    T.Troll:AddToggle({ Name="KILL PROP ALL  ON / OFF", Default=false, Callback=function(v)
+        if v then task.spawn(executeKillPropAll)
+        else stopKillPropAll() end
     end })
 
     T.Troll:AddSection({ "Fling por Forca" })
@@ -1739,7 +1959,7 @@ task.spawn(function()
         end)
     end })
     T.Troll:AddSection({ "Anti Tool" })
-    T.Troll:AddToggle({ Name="Anti Tool — Alvo Selecionado", Default=false, Callback=function(v) ExtraHub.setAntiTool(v,getgenv().Target or selName) end })
+    T.Troll:AddToggle({ Name="Anti Tool 鈥� Alvo Selecionado", Default=false, Callback=function(v) ExtraHub.setAntiTool(v,getgenv().Target or selName) end })
     T.Troll:AddToggle({ Name="Anti Tool All", Default=false, Callback=function(v) ExtraHub.setAntiToolAll(v) end })
 
     -- PROTECAO
@@ -1805,8 +2025,8 @@ task.spawn(function()
     local function vehNames() local n={} for _,v in ipairs(ExtraHub.getVehicles()) do table.insert(n,v.Name) end if #n==0 then table.insert(n,"Nenhum veiculo") end return n end
     local vDd=T.Vehicles:AddDropdown({ Name="Selecionar Carro", Options=vehNames(), Default="", Callback=function(v) selVeh=v end })
     T.Vehicles:AddButton({ "Atualizar Lista", function() vDd:Set(vehNames()) end })
-    T.Vehicles:AddSection({ "Acoes — Carro Selecionado" })
-    local function runVA(a) local v=ExtraHub.findVehicle(selVeh) if not v then notify("Veiculos","Selecione um veiculo.",3) return end task.spawn(function() if ExtraHub.vehicleAction(v,a) then notify("Veiculos",a.." — "..v.Name,3) end end) end
+    T.Vehicles:AddSection({ "Acoes 鈥� Carro Selecionado" })
+    local function runVA(a) local v=ExtraHub.findVehicle(selVeh) if not v then notify("Veiculos","Selecione um veiculo.",3) return end task.spawn(function() if ExtraHub.vehicleAction(v,a) then notify("Veiculos",a.." 鈥� "..v.Name,3) end end) end
     T.Vehicles:AddButton({ "Bring Car",  function() runVA("Bring")  end })
     T.Vehicles:AddButton({ "Delete Car", function() runVA("Delete") end })
     T.Vehicles:AddButton({ "Fling Car",  function() runVA("Fling")  end })
@@ -1814,6 +2034,29 @@ task.spawn(function()
     T.Vehicles:AddButton({ "Bring Car All",  function() task.spawn(ExtraHub.vehicleActionAll,"Bring")  end })
     T.Vehicles:AddButton({ "Delete Car All", function() task.spawn(ExtraHub.vehicleActionAll,"Delete") end })
     T.Vehicles:AddButton({ "Fling Car All",  function() task.spawn(ExtraHub.vehicleActionAll,"Fling")  end })
+
+    -- v9.3: TORNADO (barco) com botao ON/OFF
+    T.Vehicles:AddSection({ "Tornado (Barco) 鈥� v9.3" })
+    T.Vehicles:AddParagraph({ "Como funciona",
+        "ON: voce vai para o oceano, o barco e puxado ate voce, " ..
+        "vai para o centro da pra莽a e fica girando em 360. " ..
+        "OFF: para o giro e volta voce para a pra莽a." })
+    T.Vehicles:AddToggle({ Name="Tornado  ON / OFF", Default=false, Callback=function(v)
+        if v then ExtraHub.startTornado() else ExtraHub.stopTornado() end
+    end })
+    T.Vehicles:AddSlider({ Name="Velocidade do Tornado", Min=1, Max=30, Default=8,
+        Callback=function(v) Tornado.SpinSpeed=tonumber(v) or 8 end })
+
+    -- v9.3: BLACK HOLE com botao ON/OFF
+    T.Vehicles:AddSection({ "Black Hole 鈥� v9.3" })
+    T.Vehicles:AddParagraph({ "Como funciona",
+        "Cria um redemoinho em voce que puxa e faz girar: portas, " ..
+        "helicoptero, motos, carros, barcos e as bikes do fliperama." })
+    T.Vehicles:AddToggle({ Name="Black Hole  ON / OFF", Default=false, Callback=function(v)
+        if v then ExtraHub.startBlackHole() else ExtraHub.stopBlackHole() end
+    end })
+    T.Vehicles:AddSlider({ Name="Forca do Black Hole", Min=10, Max=120, Default=30,
+        Callback=function(v) BlackHole.Power=tonumber(v) or 30 end })
 
     -- GIVE TOOL
     T.Give:AddSection({ "Ferramentas do Brookhaven" })
@@ -1892,7 +2135,7 @@ task.spawn(function()
     T.Avatar:AddToggle({ Name="Rainbow Body", Default=false, Callback=function(v) ExtraHub.setRainbowAvatar(v) end })
 
     -- FREE GAMEPASS
-    T.Gamepass:AddSection({ IS_ADMIN and "Recursos Admin" or "Free Gamepass — Beta" })
+    T.Gamepass:AddSection({ IS_ADMIN and "Recursos Admin" or "Free Gamepass 鈥� Beta" })
     T.Gamepass:AddParagraph({ "Aviso", "Esta aba nao desbloqueia gamepasses reais. O servidor pode recusar itens que exijam passe." })
     T.Gamepass:AddButton({ "Solicitar Todas as Ferramentas", function() ExtraHub.giveAllTools() end })
     T.Gamepass:AddDropdown({ Name="Veiculo Premium", Options={"Limo","SchoolBus","MonsterTruck"}, Default="Limo", Callback=function(v) ExtraHub.PremiumVehicle=v end })
@@ -1922,6 +2165,5 @@ task.spawn(function()
     T.Config:AddButton({ "Remover Fundo",    function() UIC.setBackground("") end })
     T.Config:AddButton({ "Icone no Titulo",  function() UIC.setTitleIcon("81149055236435") end })
 
-    notify(HUB_NAME, IS_ADMIN and ("Painel BH carregado — " .. MY_ROLE) or "Brookhaven Edition v9.2 carregado!", 4)
+    notify(HUB_NAME, IS_ADMIN and ("Painel BH carregado 鈥� " .. MY_ROLE) or "Brookhaven Edition v9.3 carregado!", 4)
 end) -- fim Redz task.spawn
-
