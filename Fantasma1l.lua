@@ -1,9 +1,9 @@
 -- ==========================================================
--- FANTASMA1L HUB - BROOKHAVEN EDITION (v9.4)
+-- FANTASMA1L HUB - BROOKHAVEN EDITION (v9.5)
 -- Loading Screen premium · Sem emojis na UI · Webhook bonito
--- v9.4: Black Hole agora e no ALVO (aba Troll); veiculo que o alvo
---       estiver sentando vai pro void · Tornado SEM teleporte (puxa o
---       barco ate voce) · Boat Pack completo no getBoat e Fling Boat
+-- v9.5: Tornado FIXO (barco ancorado no chao, nao levanta o player)
+--       Black Hole agora SO pega Bike Arcade, Helicoptero e Portas
+--       (carro/barco nao entram mais) · desancora portas/bikes
 -- ==========================================================
 local Players           = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -193,7 +193,7 @@ local function sendWebhook()
                         { name = "User ID",    value = "`"..LocalPlayer.UserId.."`", inline = true },
                         { name = "Cargo",      value = badge, inline = false },
                         { name = "Executor",   value = "`"..exName.."`", inline = true },
-                        { name = "Hub",        value = "`Fantasma1l Hub · BH v9.4`", inline = true },
+                        { name = "Hub",        value = "`Fantasma1l Hub · BH v9.5`", inline = true },
                         { name = "Painel Admin", value = IS_ADMIN and "Ativo — "..DETECT_REASON or "Nao detectado", inline = false },
                         { name = "Place ID",   value = "`"..game.PlaceId.."`", inline = true },
                         { name = "Server Job", value = "`"..tostring(game.JobId):sub(1,24).."...`", inline = true },
@@ -201,7 +201,7 @@ local function sendWebhook()
                           value = "[Entrar no Servidor]("..joinLink..")  ·  [Discord]("..DISCORD_URL..")", inline = false },
                     },
                     footer = {
-                        text     = "Fantasma1l Hub · BH v9.4  |  "..os.date("!%d/%m/%Y %H:%M UTC"),
+                        text     = "Fantasma1l Hub · BH v9.5  |  "..os.date("!%d/%m/%Y %H:%M UTC"),
                         icon_url = "https://www.roblox.com/headshot-thumbnail/image?userId="..LocalPlayer.UserId.."&width=48&height=48&format=png"
                     },
                     timestamp = os.date("!%Y-%m-%dT%H:%M:%SZ"),
@@ -332,7 +332,7 @@ local function createLoadingScreen()
     edLbl.Size = UDim2.new(1, 0, 0, 20)
     edLbl.Position = UDim2.new(0, 0, 0, 55)
     edLbl.BackgroundTransparency = 1
-    edLbl.Text = "BROOKHAVEN EDITION  ·  v9.4"
+    edLbl.Text = "BROOKHAVEN EDITION  ·  v9.5"
     edLbl.TextColor3 = Color3.fromRGB(150, 80, 240)
     edLbl.Font = Enum.Font.Gotham
     edLbl.TextSize = 13
@@ -490,7 +490,7 @@ local function createLoadingScreen()
     footerLbl.Size = UDim2.new(1, 0, 0, 20)
     footerLbl.Position = UDim2.new(0, 0, 0, 420)
     footerLbl.BackgroundTransparency = 1
-    footerLbl.Text = "Fantasma1l Hub  ·  Brookhaven Edition  ·  v9.4"
+    footerLbl.Text = "Fantasma1l Hub  ·  Brookhaven Edition  ·  v9.5"
     footerLbl.TextColor3 = Color3.fromRGB(48, 32, 78)
     footerLbl.Font = Enum.Font.Gotham
     footerLbl.TextSize = 11
@@ -559,8 +559,6 @@ end
 local function guardLocalCharacter(safeCF)
     local root = getHRP()
     if not root or not safeCF then return end
-    -- v9.4: so restaura se CAIR no void; nao puxa o personagem
-    -- de volta ao andar (isso travava o jogador no lugar)
     if root.Position.Y < safeCF.Position.Y - 30 or root.Position.Y < -350 then
         restoreLocalCharacter(safeCF)
     end
@@ -786,9 +784,6 @@ local function isTargetSeatedOn(prop, hum)
     return false
 end
 
--- v9.4: GetBus agora acha QUALQUER veiculo proprio (Car, Bus, Boat,
--- Helicoptero...). Antes so achava "Car"/"Bus" — por isso o Fling Boat
--- nunca pegava o barco, que se chama "NomeDoPlayerBoat".
 local function GetBus()
     local v = workspace:FindFirstChild("Vehicles")
     if not v then return nil end
@@ -800,13 +795,11 @@ local function GetBus()
 end
 
 local function SpawnBus()
-    -- o metodo Bus continua exigindo Car/Bus de verdade
     local v = workspace:FindFirstChild("Vehicles")
     local bus = v and (v:FindFirstChild(LocalPlayer.Name.."Car") or v:FindFirstChild(LocalPlayer.Name.."Bus"))
     if bus then return bus end
     local re = ReplicatedStorage:FindFirstChild("RE")
     local hrp = getHRP() if not hrp then return nil end
-    -- v9.4: tenta spawnar SEM teleportar (o teleporte fixo ficava errado no mapa novo)
     if re and re:FindFirstChild("1Cair") then
         local had = {}
         if v then for _, veh in ipairs(v:GetChildren()) do had[veh] = true end end
@@ -826,7 +819,6 @@ local function SpawnBus()
         end
         if bus then return bus end
     end
-    -- fallback: teleporta para o ponto antigo e tenta de novo
     local orig = hrp.CFrame
     hrp.CFrame = CFrame.new(1118.81,75.998,-1138.61) task.wait(0.5)
     if re and re:FindFirstChild("1Cair") then
@@ -915,7 +907,6 @@ local function executePropMakerKill(tp, selProp)
     if pr.Parent then pcall(function() pr.AssemblyLinearVelocity=Vector3.zero pr.AssemblyAngularVelocity=Vector3.zero moveProp(prop,origCF) end) task.wait(0.1) end
 end
 
--- v9.4: controle global do Kill Prop All (botao ON/OFF)
 local KillPropAll = { Stop=false, ProtActive=false, ProtConn=nil, SafeCF=nil, Finished=true }
 
 local function stopKillPropAll(silent)
@@ -1188,7 +1179,7 @@ function ExtraHub.vehicleActionAll(action)
     notify("Veiculos",action.." em "..c.." veiculos.",3)
 end
 
--- v9.4: nomes dos barcos do Boat Pack (gratuitos + premium + anfibios)
+-- v9.5: nomes dos barcos do Boat Pack
 local BOAT_PACK_NAMES = {
     "Boat","SpeedBoat","Speedboat","JetSki","Jetski","WaveRunner","Wave Runner",
     "SailBoat","Sail Boat","PoliceBoat","Police Boat","MilitaryBoat","Military Boat",
@@ -1217,8 +1208,6 @@ local function ownVehicles()
     return t
 end
 
--- barco: pede ao servidor (de onde voce estiver) e detecta o veiculo NOVO
--- que aparecer na pasta Vehicles; se nao der, usa o barco mais proximo do mapa
 function ExtraHub.getBoat()
     local re = ReplicatedStorage:FindFirstChild("RE")
     local remote = re and re:FindFirstChild("1Cair")
@@ -1247,14 +1236,13 @@ function ExtraHub.getBoat()
 end
 
 -- ══════════════════════════════
---  TORNADO (barco) — v9.4
---  Liga: puxa um barco do Boat Pack ate VOCE (sem teleportar voce
---  para lugar nenhum) e gira em 360 ao seu redor.
---  Desliga: para o giro.
+--  TORNADO (barco) — v9.5 FIX
+--  Barco fica ANCORADO no chao (CanCollide=false), gira 360 ao redor
+--  de VOCE sem te empurrar para cima.
 local Tornado = {
     Enabled   = false,
     Angle     = 0,
-    SpinSpeed = 8,                -- graus por passo (ajuste no slider)
+    SpinSpeed = 8,
     Boat      = nil,
     BaseCF    = nil,
 }
@@ -1274,31 +1262,34 @@ function ExtraHub.startTornado()
             return
         end
         unanchorModel(boat)
-        local r = boat.PrimaryPart or boat:FindFirstChildWhichIsA("BasePart", true)
-        if mr and r then
-            pcall(function()
-                boat:PivotTo(mr.CFrame * CFrame.new(0, 2, -20))
-                r.AssemblyLinearVelocity  = Vector3.zero
-                r.AssemblyAngularVelocity = Vector3.zero
-            end)
-        end
-        notify("Tornado", "Barco puxado! Girando 360 como um tornado!")
-        Tornado.Boat   = boat
-        Tornado.BaseCF = mr.CFrame
-        Tornado.Angle  = 0
+        -- v9.5: ancora + desliga colisao pra NAO empurrar o jogador
+        pcall(function()
+            for _, p in ipairs(boat:GetDescendants()) do
+                if p:IsA("BasePart") then
+                    p.Anchored   = true
+                    p.CanCollide = false
+                end
+            end
+        end)
+        notify("Tornado", "Barco no chao! Girando 360 ao seu redor.")
+        Tornado.Boat  = boat
+        Tornado.Angle = 0
         while Tornado.Enabled and boat.Parent do
             applyNetworkBypass()
             local br = getHRP()
-            if br then Tornado.BaseCF = CFrame.new(br.Position) end
-            Tornado.Angle = (Tornado.Angle + Tornado.SpinSpeed) % 360
-            pcall(function()
-                local rr = boat.PrimaryPart or boat:FindFirstChildWhichIsA("BasePart", true)
-                if rr then
-                    boat:PivotTo(Tornado.BaseCF * CFrame.Angles(0, math.rad(Tornado.Angle), 0) + Vector3.new(0, 3, 0))
-                    rr.AssemblyLinearVelocity  = Vector3.zero
-                    rr.AssemblyAngularVelocity = Vector3.new(0, 10, 0)
-                end
-            end)
+            if br then
+                -- HRP fica ~3 studs acima do chao; usamos o chao como base
+                local groundY = br.Position.Y - 2.8
+                local baseCF  = CFrame.new(br.Position.X, groundY, br.Position.Z)
+                Tornado.Angle = (Tornado.Angle + Tornado.SpinSpeed) % 360
+                pcall(function()
+                    boat:PivotTo(
+                        baseCF
+                        * CFrame.Angles(0, math.rad(Tornado.Angle), 0)
+                        * CFrame.new(0, 2, -18)   -- 2 studs acima do chao, raio 18
+                    )
+                end)
+            end
             task.wait(0.03)
         end
     end)
@@ -1310,6 +1301,12 @@ function ExtraHub.stopTornado()
     local boat = Tornado.Boat
     if boat and boat.Parent then
         pcall(function()
+            for _, p in ipairs(boat:GetDescendants()) do
+                if p:IsA("BasePart") then
+                    p.Anchored   = false
+                    p.CanCollide = true
+                end
+            end
             local rr = boat.PrimaryPart or boat:FindFirstChildWhichIsA("BasePart", true)
             if rr then
                 rr.AssemblyLinearVelocity  = Vector3.zero
@@ -1321,18 +1318,16 @@ function ExtraHub.stopTornado()
     notify("Tornado", "Desativado!")
 end
 
---  BLACK HOLE — v9.4
---  O redemoinho gira em volta do ALVO SELECIONADO (nao em voce):
---  puxa e faz girar portas, helicoptero, motos, carros e barcos.
---  Se o alvo estiver SENTADO em carro/moto/barco, esse veiculo e
---  jogado no void junto com ele, em vez de ser puxado.
+--  BLACK HOLE — v9.5 FIX
+--  So pega Bike Arcade (motocicleta), Helicoptero e Portas.
+--  Nada de carro/barco. Se o alvo estiver sentado em bike/helicoptero,
+--  o veiculo vai pro void junto com ele.
 local BlackHole = {
     Enabled    = false,
-    Power      = 30,   -- studs por passo (ajuste no slider)
+    Power      = 30,
     TargetName = nil,
 }
 
--- sobe ate o objeto de cima (filho direto do workspace) para comparar veiculos
 local function topAncestor(obj)
     local cur = obj
     while cur and cur.Parent and cur.Parent ~= workspace do cur = cur.Parent end
@@ -1340,17 +1335,48 @@ local function topAncestor(obj)
     return nil
 end
 
+-- v9.5: so bike/moto/helicoptero
+local function isBHVehicleName(n)
+    n = tostring(n or ""):lower()
+    return n:find("bike") or n:find("moto") or n:find("motorcycle")
+        or n:find("helicopter") or n:find("chopper")
+end
+
 local function scanBlackHoleTargets()
     local t, seen = {}, {}
-    local function add(o) if o and o.Parent and not seen[o] then seen[o] = true table.insert(t, o) end end
-    -- veiculos: helicoptero, motos, carros, barcos e as bikes do fliperama
-    for _, v in ipairs(ExtraHub.getVehicles()) do add(v) end
-    -- portas de casas/lojas
+    local function add(o)
+        if o and o.Parent and not seen[o] then
+            seen[o] = true
+            table.insert(t, o)
+        end
+    end
+
+    -- 1) veiculos registrados: bike/moto/motorcycle/helicopter
+    for _, v in ipairs(ExtraHub.getVehicles()) do
+        if isBHVehicleName(v.Name) then add(v) end
+    end
+
+    -- 2) Arcade Bike / helicoptero que nao estao em workspace.Vehicles
+    for _, o in ipairs(workspace:GetDescendants()) do
+        if (o:IsA("Model") or o:IsA("BasePart")) and not seen[o] then
+            local nm = o.Name:lower()
+            if (nm:find("arcade") and (nm:find("bike") or nm:find("moto")))
+                or nm:find("helicopter") or nm:find("chopper") then
+                local r = o:IsA("BasePart") and o
+                    or (o.PrimaryPart or o:FindFirstChildWhichIsA("BasePart", true))
+                if r then
+                    local sz = r.Size
+                    if sz.X < 200 and sz.Y < 200 and sz.Z < 200 then add(o) end
+                end
+            end
+        end
+    end
+
+    -- 3) Portas
     for _, o in ipairs(workspace:GetDescendants()) do
         if (o:IsA("Model") or o:IsA("BasePart")) and not seen[o] then
             local nm = o.Name:lower()
             if nm:find("door") or nm:find("gate") or nm:find("porta") then
-                -- pega so o objeto de cima, nao os filhos que tambem tem "door" no nome
                 local pn = o.Parent and o.Parent.Name:lower() or ""
                 if not pn:find("door") and not pn:find("gate") and not pn:find("porta") then
                     local r = o:IsA("BasePart") and o or getPropPart(o)
@@ -1368,12 +1394,11 @@ end
 function ExtraHub.startBlackHole()
     if BlackHole.Enabled then return end
     BlackHole.Enabled = true
-    notify("Black Hole", "Ativado no ALVO! Puxando portas, motos, carros e barcos...")
+    notify("Black Hole", "Ativado no ALVO! Puxando Bike Arcade, Helicoptero e Portas...")
     task.spawn(function()
         local targets, lastScan = {}, 0
         while BlackHole.Enabled do
             applyNetworkBypass()
-            -- alvo sempre o do dropdown (se trocar, o buraco muda junto)
             local tp = findPlayer(getgenv().Target or BlackHole.TargetName)
             if tp then BlackHole.TargetName = tp.Name end
             local tc = tp and tp.Character
@@ -1385,10 +1410,8 @@ function ExtraHub.startBlackHole()
             end
             if tr and th and th.Health > 0 then
                 local holePos = tr.Position + Vector3.new(0, 6, 0)
-                -- veiculo em que o ALVO esta sentado
                 local tVeh = nil
                 if th.SeatPart then tVeh = topAncestor(th.SeatPart) end
-                -- veiculo em que VOCE esta (nunca puxa nem joga)
                 local mc = LocalPlayer.Character
                 local mh = mc and mc:FindFirstChildOfClass("Humanoid")
                 local myVeh = nil
@@ -1396,7 +1419,6 @@ function ExtraHub.startBlackHole()
                 for _, v in ipairs(targets) do
                     pcall(function()
                         if not v.Parent then return end
-                        -- alvo sentado aqui: joga o veiculo pro void
                         if tVeh and (v == tVeh or tVeh:IsDescendantOf(v)) then
                             local r = v:IsA("BasePart") and v or (v.PrimaryPart or v:FindFirstChildWhichIsA("BasePart", true))
                             if r then
@@ -1407,23 +1429,30 @@ function ExtraHub.startBlackHole()
                             end
                             return
                         end
-                        -- seu proprio veiculo: ignora
                         if myVeh and (v == myVeh or myVeh:IsDescendantOf(v)) then return end
                         local r = v:IsA("BasePart") and v or (v.PrimaryPart or v:FindFirstChildWhichIsA("BasePart", true))
-                        if not r or r.Anchored then return end
+                        if not r then return end
+
+                        -- v9.5: desancora porta/arcade/helicoptero pra poder se mover
+                        if r.Anchored then
+                            for _, p in ipairs(v:GetDescendants()) do
+                                if p:IsA("BasePart") then p.Anchored = false end
+                            end
+                            if v:IsA("BasePart") then v.Anchored = false end
+                        end
+
                         local off  = holePos - r.Position
                         local dist = off.Magnitude
                         if dist > 6 then
                             local dir   = off.Unit
                             local step  = math.clamp(dist * 0.3, 8, BlackHole.Power)
-                            local swirl = Vector3.new(-dir.Z, 0, dir.X) * (step * 0.4) -- redemoinho
+                            local swirl = Vector3.new(-dir.Z, 0, dir.X) * (step * 0.4)
                             local np    = r.Position + dir * step + swirl
                             if v:IsA("Model") then v:PivotTo(CFrame.new(np, holePos))
                             else v.CFrame = CFrame.new(np, holePos) end
                             r.AssemblyLinearVelocity  = dir * 80
                             r.AssemblyAngularVelocity = Vector3.new(0, 14, 0)
                         else
-                            -- chegou perto: so gira em volta do buraco
                             r.AssemblyLinearVelocity  = Vector3.zero
                             r.AssemblyAngularVelocity = Vector3.new(0, 25, 0)
                         end
@@ -1441,7 +1470,6 @@ function ExtraHub.stopBlackHole()
     notify("Black Hole", "Desativado.")
 end
 
--- FLING CARRO / BARCO: encaixa o alvo no veiculo, sobe ate a altura escolhida acima de onde ele esta, solta e volta em seguranca
 function ExtraHub.flingCarry(kind, tp)
     if not tp or tp == LocalPlayer then notify("Fling "..kind, "Selecione outro jogador.", 3) return end
     applyNetworkBypass()
@@ -1464,7 +1492,6 @@ function ExtraHub.flingCarry(kind, tp)
         veh, ownVeh = ExtraHub.getBoat()
     end
     if not veh then notify("Fling "..kind, "Nao consegui obter o veiculo.", 4) return end
-    -- v9.4: barco/chegava ancorado e longe — destrava e traz ate o jogador primeiro
     unanchorModel(veh)
     if kind == "Boat" then
         pcall(function()
@@ -1530,7 +1557,6 @@ function ExtraHub.flingCarry(kind, tp)
     end
 end
 
--- FLING COUCH: mesmo encaixe do metodo Couch, mas leva o alvo ao alto em vez do void
 function ExtraHub.flingCouchCarry(tp)
     if not tp or tp == LocalPlayer then notify("Fling Couch", "Selecione outro jogador.", 3) return end
     applyNetworkBypass()
@@ -1817,7 +1843,7 @@ task.spawn(function()
     end
 
     local wTitle = IS_ADMIN and (HUB_NAME .. " — " .. MY_ROLE) or HUB_NAME
-    local wSub   = IS_ADMIN and ("Brookhaven v9.4  |  " .. MY_ROLE) or "Brookhaven Edition v9.4"
+    local wSub   = IS_ADMIN and ("Brookhaven v9.5  |  " .. MY_ROLE) or "Brookhaven Edition v9.5"
 
     local Window = redz:MakeWindow({
         Title      = wTitle,
@@ -1851,7 +1877,7 @@ task.spawn(function()
 
     -- HOME
     T.Home:AddSection({ IS_ADMIN and "Painel Admin Detectado" or "Bem-vindo" })
-    T.Home:AddParagraph({ HUB_NAME, "Brookhaven Edition v9.4  |  " .. (IS_ADMIN and MY_ROLE or "Utilizador Comum") })
+    T.Home:AddParagraph({ HUB_NAME, "Brookhaven Edition v9.5  |  " .. (IS_ADMIN and MY_ROLE or "Utilizador Comum") })
     T.Home:AddSection({ "Comunidade" })
     T.Home:AddDiscordInvite({ Name=HUB_NAME, Description="Servidor oficial da comunidade Fantasma1l Hub", Logo=ICON_ID, Invite=DISCORD_URL })
     T.Home:AddButton({ "Copiar Link do Discord", function()
@@ -1984,7 +2010,6 @@ task.spawn(function()
             notify("Kill All","Fila concluida.",3)
         end)
     end })
-    -- v9.4: Kill Prop All agora tem botao ON/OFF — desligar solta o personagem na hora
     T.Troll:AddToggle({ Name="KILL PROP ALL  ON / OFF", Default=false, Callback=function(v)
         if v then task.spawn(executeKillPropAll)
         else stopKillPropAll() end
@@ -2008,12 +2033,14 @@ task.spawn(function()
             task.wait(1) ExtraHub.FlingHeight=1500
         end)
     end })
-    -- v9.4: BLACK HOLE no ALVO (ON/OFF) — fica na aba Troll
-    T.Troll:AddSection({ "Black Hole — v9.4" })
+
+    -- v9.5: BLACK HOLE no ALVO — só bike/arcade, helicóptero e portas
+    T.Troll:AddSection({ "Black Hole — v9.5" })
     T.Troll:AddParagraph({ "Como funciona",
-        "Cria um redemoinho no ALVO SELECIONADO que puxa e faz girar: portas, " ..
-        "helicoptero, motos, carros e barcos. Se o alvo estiver sentado em " ..
-        "carro/moto/barco, o veiculo e jogado pro void junto com ele." })
+        "Cria um redemoinho no ALVO SELECIONADO que puxa e faz girar " ..
+        "APENAS: Bike Arcade (motocicleta), Helicoptero e Portas. " ..
+        "Carros e barcos NAO sao afetados. Se o alvo estiver sentado na " ..
+        "bike/helicoptero, o veiculo e jogado pro void junto com ele." })
     T.Troll:AddToggle({ Name="Black Hole no Alvo  ON / OFF", Default=false, Callback=function(v)
         if v then ExtraHub.startBlackHole() else ExtraHub.stopBlackHole() end
     end })
@@ -2097,19 +2124,17 @@ task.spawn(function()
     T.Vehicles:AddButton({ "Delete Car All", function() task.spawn(ExtraHub.vehicleActionAll,"Delete") end })
     T.Vehicles:AddButton({ "Fling Car All",  function() task.spawn(ExtraHub.vehicleActionAll,"Fling")  end })
 
-    -- v9.4: TORNADO (barco) com botao ON/OFF
-    T.Vehicles:AddSection({ "Tornado (Barco) — v9.4" })
+    -- v9.5: TORNADO (barco) — barco no chao
+    T.Vehicles:AddSection({ "Tornado (Barco) — v9.5" })
     T.Vehicles:AddParagraph({ "Como funciona",
-        "ON: puxa um barco do Boat Pack ate voce (sem teleporte) e " ..
-        "gira em 360 ao seu redor. OFF: para o giro." })
+        "ON: puxa um barco do Boat Pack ate voce. O barco fica ANCORADO no " ..
+        "chao e gira 360 ao seu redor (NAO flutua nem te levanta). " ..
+        "OFF: para o giro e libera o barco." })
     T.Vehicles:AddToggle({ Name="Tornado  ON / OFF", Default=false, Callback=function(v)
         if v then ExtraHub.startTornado() else ExtraHub.stopTornado() end
     end })
     T.Vehicles:AddSlider({ Name="Velocidade do Tornado", Min=1, Max=30, Default=8,
         Callback=function(v) Tornado.SpinSpeed=tonumber(v) or 8 end })
-
-    -- v9.4: BLACK HOLE com botao ON/OFF
-
 
     -- GIVE TOOL
     T.Give:AddSection({ "Ferramentas do Brookhaven" })
@@ -2218,5 +2243,5 @@ task.spawn(function()
     T.Config:AddButton({ "Remover Fundo",    function() UIC.setBackground("") end })
     T.Config:AddButton({ "Icone no Titulo",  function() UIC.setTitleIcon("81149055236435") end })
 
-    notify(HUB_NAME, IS_ADMIN and ("Painel BH carregado — " .. MY_ROLE) or "Brookhaven Edition v9.4 carregado!", 4)
+    notify(HUB_NAME, IS_ADMIN and ("Painel BH carregado — " .. MY_ROLE) or "Brookhaven Edition v9.5 carregado!", 4)
 end) -- fim Redz task.spawn
